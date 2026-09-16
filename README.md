@@ -5,6 +5,26 @@ birthdays across Instagram, Facebook, Messenger, and WhatsApp, then puts
 them on your Google Calendar as yearly all-day events — only ever with
 your approval.
 
+## Install
+
+**Muse Code** (plugins are now live — install from a marketplace or a
+local bundle, all from `/plugins`):
+
+```bash
+git clone https://github.com/stellakaval/birthday-finder
+```
+
+Then in Muse Code, open `/plugins` and install from the local bundle
+(point it at the cloned folder). Enable/disable, update, and remove all
+happen from `/plugins` too, where you can also review the plugin's
+runtime capabilities before enabling.
+
+Don't have Muse Code yet? Install it with:
+
+```bash
+curl -fsSL dev.meta.ai/install.sh | bash
+```
+
 ## How it works
 
 1. **Tell it whose birthdays you want** — your Instagram Close Friends
