@@ -66,13 +66,15 @@ Skip any platform whose skill isn't connected and say so.
 
 - **D. Facebook posts** (`facebook_cli`): resolve your id first
   (`facebook-cli me` → top-level `fb_user_id`; `--profile-id me` 404s),
-  then `timeline fetch --profile-id <id>` and page back — the list view
+  then `timeline fetch --profile-id <id>` and page back (response:
+  top-level `posts`, `has_next_page`/`next_cursor`) — the list view
   has no post text, so run `post read --post-id` on candidates. `social.search`
   is a secondary angle for own posts (hit-or-miss on history). Tagged
   friends and mentioned names map back to the people list.
 
 - **E. Facebook stories** (`facebook_cli`): `story feed` shows the
-  *current* 24h tray — there is no story archive API, so this source only
+  *current* 24h tray (response: top-level `buckets`, each with a
+  `stories` array) — there is no story archive API, so this source only
   sees what's live right now. Check the response for text overlays first;
   if absent, OCR thumbnails the same way as Source B. Best used as a
   recurring check rather than a one-shot.
