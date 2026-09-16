@@ -18,12 +18,12 @@ Checkpointing means a killed run resumes where it left off.
 
 import argparse
 import json
+import multiprocessing as mp
 import os
 import subprocess
 import sys
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Pool
 
 DEFAULT_KEYWORDS = ["birthday", "bday", "hbd", "happy b", "turning ",
                     "hbday", "b-day"]
@@ -53,12 +53,14 @@ def enumerate_archive(account_id, max_pages=0):
         if not batch:
             break
         for it in batch:
-            media = it.get("media") or it
+            media = it.get("media") or {}
+            if isinstance(media, list):
+                media = media[0] if media else {}
             items.append({
                 "id": str(it.get("id") or media.get("id")),
                 "created_at": it.get("created_at") or media.get("created_at"),
-                "media_type": it.get("media_type") or media.get("media_type"),
-                "image_url": it.get("image_url") or media.get("image_url"),
+                "media_type": media.get("media_type"),
+                "image_url": media.get("image_url"),
             })
         pages += 1
         max_id = data.get("next_max_id")
@@ -150,9 +152,12 @@ def main():
     print(f"todo={len(todo)} already={len(done_ids)}", flush=True)
 
     total = len(jobs)
+    # NOTE: spawn (not fork) — the download ThreadPoolExecutor above leaves
+    # live threads, and forking a multithreaded process can deadlock workers.
+    ctx = mp.get_context("spawn")
     for ci in range(0, len(todo), args.chunk_size):
         chunk = todo[ci:ci + args.chunk_size]
-        pool = Pool(args.workers, initializer=init_worker)
+        pool = ctx.Pool(args.workers, initializer=init_worker)
         try:
             for j in chunk:
                 text = pool.apply(ocr_file, (j["path"],))
