@@ -134,17 +134,32 @@ approved date, create on their primary Google Calendar via the
 ```json
 {
   "summary": "<Name>'s Birthday",
-  "description": "<source/evidence, e.g. 'Birthday shoutout in IG stories (Aug 11, 2023 & 2024); confirmed by WhatsApp message'>",
+  "eventType": "birthday",
   "start": {"date": "2026-08-11"},
   "end": {"date": "2026-08-12"},
   "recurrence": ["RRULE:FREQ=YEARLY"],
+  "visibility": "private",
   "transparency": "transparent"
 }
 ```
 
+Use Google Calendar's native `birthday` event type (per the
+[Calendar API event-types guide](https://developers.google.com/workspace/calendar/api/guides/event-types)).
+Constraints the API enforces — get these exactly right or the insert fails:
+
+- All-day, spanning exactly one day (`start.date`/`end.date`, no times).
+- `visibility` must be `"private"`, `transparency` must be `"transparent"`.
+- `recurrence` must be exactly `["RRULE:FREQ=YEARLY"]`.
+  Feb 29 birthdays: `["RRULE:FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=-1"]`.
+- Only `summary`, `colorId`, and `reminders` may be set alongside —
+  **no `description`**. Birthday-type events reject every other property.
+  Keep the evidence/confidence log in your own notes or files instead.
+- `eventType` cannot be changed on an existing event via patch/update. To
+  convert a `default`-type birthday to the native type: insert the new
+  birthday event first, verify success, then delete the old one.
+
 All-day, yearly, transparent (shows as free — birthdays aren't meetings).
-Evidence and confidence go in the description. Report what was added and
-what was skipped.
+Report what was added and what was skipped.
 
 ## Parallel execution pattern
 
