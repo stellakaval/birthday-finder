@@ -56,14 +56,19 @@ Skip any platform whose skill isn't connected and say so.
   it lands.
 
 - **C. Instagram post captions** (`instagram`): pull feed posts
-  (`instagram-cli posts`, a year or two back) and grep captions for
-  birthday keywords + `@mentions`. Same matching as B, much faster.
+  (`instagram-cli posts`, paginated — it returns the full visible history,
+  hundreds of posts) and grep captions for birthday keywords +
+  `@mentions`. Same matching as B, much faster. Note: neither Instagram
+  nor Facebook exposes a *post* archive API (only IG's story archive
+  exists) — deep pagination over posts/timeline is the complete
+  reachable history.
 
-- **D. Facebook posts** (`facebook_cli`): two angles —
-  `timeline fetch --profile-id me` scanned for "happy birthday" posts,
-  plus `social.search` semantic search across your graph
-  (e.g. "birthday posts for friends"). Tagged friends and mentioned names
-  map back to the people list.
+- **D. Facebook posts** (`facebook_cli`): resolve your id first
+  (`facebook-cli me` → `fb_user_id`; `--profile-id me` 404s), then
+  `timeline fetch --profile-id <id>` and page back — the list view has no
+  post text, so run `post read --post-id` on candidates. `social.search`
+  is a secondary angle for own posts (hit-or-miss on history). Tagged
+  friends and mentioned names map back to the people list.
 
 - **E. Facebook stories** (`facebook_cli`): `story feed` shows the
   *current* 24h tray — there is no story archive API, so this source only
@@ -77,7 +82,9 @@ Skip any platform whose skill isn't connected and say so.
   `instagram-messages-cli keyword-search --query-text "happy birthday"`).
   Message date = birthday. In 1:1 chats the other participant is the
   birthday person; in group chats, read the message to see who it's
-  addressed to before attributing. Date the message, not the reply.
+  addressed to before attributing. Date the message, not the reply. The
+  IG response carries `thread_name` for attribution; `timestamp_ms` is a
+  string.
 
 - **G. WhatsApp** (`whatsapp`): `hatch_wai_cli` message search for
   birthday variants across chats. Chat name → person; in groups, confirm
