@@ -194,6 +194,12 @@ Phase 1 (gather) is embarrassingly parallel — treat it that way:
   ("happy birthday", "hbd", "happy bday", "happy belated birthday") over
   a date range beat reading threads. In group chats always verify the
   addressee.
+- Attribute the date in the **birthday person's timezone, not yours**.
+  A wish timestamped Aug 6 in your timezone can be Aug 7 where they live
+  (real case: six "Aug 6" wishes for a friend in Sydney were all Aug 7
+  her time — matching her Facebook date). When dates from two sources
+  differ by exactly the timezone offset, trust the recipient's local
+  date; only flag a genuine conflict.
 
 ## Honest limitations
 
